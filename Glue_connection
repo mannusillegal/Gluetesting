@@ -1,0 +1,29 @@
+Resources:
+  MyGlueConnection:
+    Type: AWS::Glue::Connection
+    Properties:
+      ConnectionProperties:
+        USERNAME: myUsername
+        PASSWORD: myPassword
+      PhysicalConnectionRequirements:
+        AvailabilityZone: us-east-1a
+        SecurityGroupIdList:
+          - sg-12345678
+        SubnetId: subnet-12345678
+      ConnectionInput:
+        Name: myConnectionName
+        Description: My Glue Connection
+        ConnectionType: JDBC
+        MatchCriteria:
+          - SECRET_NAME  # This is the condition to check for secret name
+
+Conditions:
+  AllowAttachmentOfSecret:
+    Fn::Equals:
+      - Ref: MySecretNameParameter  # Reference to the secret name parameter
+      - "MyAllowedSecret"  # Specify the secret name that is allowed
+
+Parameters:
+  MySecretNameParameter:
+    Type: String
+    Default: "MyAllowedSecret"  # Default secret name that is allowed
